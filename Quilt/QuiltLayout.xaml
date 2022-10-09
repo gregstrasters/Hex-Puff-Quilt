@@ -1,0 +1,175 @@
+﻿<UserControl x:Class="Quilt.QuiltLayout"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Quilt"
+             mc:Ignorable="d" 
+             d:DesignHeight="2500" d:DesignWidth="2107"
+             Background="White"
+             DataContextChanged="UserControl_DataContextChanged"
+             PreviewMouseWheel="UserControl_MouseWheel"
+             d:DataContext="{d:DesignInstance Type=local:MainVM}">
+    <Grid Background="Gray">
+        <Grid.Style>
+            <Style>
+                <Setter Property="TextBlock.Foreground" Value="White"/>
+                <Setter Property="TextBlock.FontSize" Value="18"/>
+                <Setter Property="TextBox.FontSize" Value="18"/>
+            </Style>
+        </Grid.Style>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" BorderThickness="0,0,2,0" BorderBrush="Black">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Margin="5">
+                    <Grid DataContext="{Binding Path=Config}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Padding="0,0,15,0" Text="Columns:"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=ColumnCount}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Rows:"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=RowCount}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Seed:"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=Seed}"/>
+                    </Grid>
+                    <Button Click="Seeded_Click">Seeded</Button>
+                    <Button Click="Button_Click">Random</Button>
+                    <Button Click="Button_Click_3">Empty</Button>
+                    <Separator Margin="0,5"/>
+                </StackPanel>
+                <TabControl Grid.Row="1" Width="225" Background="DimGray" DataContext="{Binding Tabs}">
+                    <TabItem Header="Fill" IsSelected="{Binding IsCustomSelected}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0">
+                                <Grid>
+                                    <ToggleButton Margin="3" Height="28" IsChecked="{Binding IsFillRegionSelected}">Fill Regions</ToggleButton>
+                                    <Rectangle HorizontalAlignment="Stretch" Height="34" Stroke="Yellow" StrokeThickness="3" Visibility="{Binding FillRegionSelectedVisibility}"/>
+                                </Grid>
+                                <Button Click="Button_Click_5">Save To Csv</Button>
+                            </StackPanel>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                                <ItemsControl ItemsSource="{Binding HexPatternPickers}" Padding="10">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="HexPatternPickerVM">
+                                            <StackPanel>
+                                                <local:HexPatternPicker HorizontalAlignment="Left" Width="175" OnRemove="Button_Click_2"/>
+                                                <Separator Margin="0,5"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                            <Button Grid.Row="2" Click="Button_Click_1">Add Pattern</Button>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Csv" IsSelected="{Binding IsCsvSelected}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid>
+                                <ToggleButton Grid.Row="0" Margin="3" Height="28" IsChecked="{Binding IsCsvFillRegionSelected}">Fill Regions</ToggleButton>
+                                <Rectangle HorizontalAlignment="Stretch" Height="34" Stroke="Yellow" StrokeThickness="3" Visibility="{Binding CsvFillRegionSelectedVisibility}"/>
+                            </Grid>
+
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding CsvHexes}" Padding="10">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderThickness="1" BorderBrush="Black">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Patterns.Count}"/>
+                                                    <CheckBox IsChecked="{Binding Path=IsSelected}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=Patterns}">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <WrapPanel Orientation="Horizontal"/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate DataType="CsvHexPickerVM">
+                                                                <StackPanel>
+                                                                    <local:CsvHexPicker/>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Mass" IsSelected="{Binding IsMassSelected}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Margin="3,0,0,3">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox VerticalAlignment="Center" Width="75" MaxLength="7" Text="{Binding MassHexColor, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <Rectangle Margin="20,0" Height="35" Width="35" Fill="{Binding MassBrush}" Stroke="Black" StrokeThickness="1"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Foreground="White" Text="Mass (g): "/>
+                                    <TextBox MinWidth="50" HorizontalContentAlignment="Right" Text="{Binding Mass}"/>
+                                </StackPanel>
+                                <Button Click="Button_Click_4">Add Hexes</Button>
+                            </StackPanel>
+
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding MassHexes}" Padding="10">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <local:CsvHexPicker/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Border>
+
+
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <Canvas Margin="5" x:Name="QuiltCanvas" Width="{Binding Path=Config.Width}" Height="{Binding Path=Config.Height}" Cursor="{Binding Cursor}">
+                <Canvas.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding Path=Config.Zoom}" ScaleY="{Binding Path=Config.Zoom}"/>
+                </Canvas.LayoutTransform>
+            </Canvas>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
