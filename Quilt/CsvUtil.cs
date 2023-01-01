@@ -62,7 +62,8 @@ namespace Quilt
             {
                 var patterns = new List<List<ColorPattern>>();
                 groupedPatterns.Add(patterns);
-                var csvRows = File.ReadAllLines($@"C:\Users\Greg\Desktop\colorgroups\{fileName}.csv", Encoding.Default).ToList();
+                var quiltPath = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName($@"{Directory.GetCurrentDirectory()}")));
+                var csvRows = File.ReadAllLines($@"{quiltPath}\colorgroups\{fileName}.csv", Encoding.Default).ToList();
                 var currentList = new List<ColorPattern>();
                 patterns.Add(currentList);
                 foreach (var row in csvRows)
