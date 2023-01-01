@@ -8,8 +8,8 @@ namespace Quilt
 {
     public class QuiltConfig : BaseVM
     {
-        private int _columnCount = 20;
-        private int _rowCount = 14;
+        private int _columnCount = 26;
+        private int _rowCount = 20;
         private double _zoom = .5;
         private int _seed = 0;
 

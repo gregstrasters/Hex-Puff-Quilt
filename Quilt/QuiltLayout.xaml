@@ -70,7 +70,7 @@
                             <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
                                 <ItemsControl ItemsSource="{Binding HexPatternPickers}" Padding="10">
                                     <ItemsControl.ItemTemplate>
-                                        <DataTemplate DataType="HexPatternPickerVM">
+                                        <DataTemplate DataType="{x:Type local:HexPatternPickerVM}">
                                             <StackPanel>
                                                 <local:HexPatternPicker HorizontalAlignment="Left" Width="175" OnRemove="Button_Click_2"/>
                                                 <Separator Margin="0,5"/>
@@ -109,7 +109,7 @@
                                                             </ItemsPanelTemplate>
                                                         </ItemsControl.ItemsPanel>
                                                         <ItemsControl.ItemTemplate>
-                                                            <DataTemplate DataType="CsvHexPickerVM">
+                                                            <DataTemplate DataType="{x:Type local:CsvHexPickerVM}">
                                                                 <StackPanel>
                                                                     <local:CsvHexPicker/>
                                                                 </StackPanel>
