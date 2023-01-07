@@ -95,17 +95,20 @@ namespace Quilt
             _network.CreateNetwork(Config.ColumnCount, Config.RowCount);
             _network.ClaimAllNodes((int)Math.Log(regionSize, 2));
             var regions = _network.Regions.Where(r => r.Any());
+            var multiIndex = 0;
+            var multiCount = Tabs.CsvColors.Last().Count();
+            var multiStep = (int)Math.Ceiling(Config.ColumnCount * Config.RowCount / (decimal)multiCount);
             foreach (var region in regions)
             {
                 var regionIndex = _network.Regions.IndexOf(region);
                 var patterns = Tabs.CsvColors[regionIndex % Tabs.CsvColors.Count()];
-                hexes.AddRange(FillRegionWithPatterns(region.Id, patterns, fillColors));
+                hexes.AddRange(FillRegionWithPatterns(region.Id, patterns, ref multiIndex, multiStep, fillColors));
             }
 
             HexList = new ObservableCollection<HexVM>(hexes);
         }
 
-        public List<HexVM> FillRegionWithPatterns(int regionId, List<List<ColorPattern>> patterns, bool fillColors = true)
+        public List<HexVM> FillRegionWithPatterns(int regionId, List<List<ColorPattern>> patterns, ref int multiIndex,  int multiStep, bool fillColors = true)
         {
             var hexes = new List<HexVM>();
             var region = _network.Regions.Single(r => r.Id == regionId);
@@ -115,7 +118,11 @@ namespace Quilt
                 HexVM newHex = null;
                 if (index < patterns.Count())
                 {
-                    newHex = new HexVM(node, fillColors ? patterns[index] : s_unfilledPattern);
+                    newHex = new HexVM(node, fillColors 
+                        ? patterns[index] 
+                        : multiIndex % multiStep == 0
+                        ? s_unselectedPattern
+                        : s_unfilledPattern);
                 }
                 else
                 {
@@ -123,6 +130,7 @@ namespace Quilt
                 }
                 newHex.PropertyChanged += OnHexChanged;
                 hexes.Add(newHex);
+                multiIndex++;
             }
             return hexes;
         }
@@ -209,10 +217,33 @@ namespace Quilt
 
         private void FillFromCsv(HexVM hex, CsvHexPickerVM csvHex)
         {
+            CsvHexPickerVM existingPattern = null;
+            if (IsNonEmptyPattern(hex))
+                existingPattern = new CsvHexPickerVM
+                {
+                    ColorPatterns = new ObservableCollection<ColorPattern>(hex.ColorPatterns),
+                    IsSelected = false,
+                    Rotation = hex.Rotation
+                };
             hex.ColorPatterns = csvHex.ColorPatterns.ToList();
             hex.Rotation = csvHex.Rotation;
             hex.IgnoreOverall = true;
             Tabs.CsvHexes.Single(l => l.Patterns.Contains(csvHex)).Patterns.Remove(csvHex);
+            if (existingPattern != null)
+                Tabs.CsvHexes.Last().Patterns.Add(existingPattern);
+        }
+
+        private bool IsNonEmptyPattern(HexVM hex)
+        {
+            bool isWhite = hex.ColorPatterns.Count == 1 && hex.ColorPatterns.First().Color.Color == Colors.White;
+            bool isUnfilled = hex.ColorPatterns.Count == 5 &&
+                hex.ColorPatterns[0].Color.Color == Colors.Black &&
+                hex.ColorPatterns[1].Color.Color == Colors.Yellow &&
+                hex.ColorPatterns[2].Color.Color == Colors.Black &&
+                hex.ColorPatterns[3].Color.Color == Colors.Yellow &&
+                hex.ColorPatterns[4].Color.Color == Colors.Black;
+
+            return !(isWhite || isUnfilled);
         }
     }
 }
