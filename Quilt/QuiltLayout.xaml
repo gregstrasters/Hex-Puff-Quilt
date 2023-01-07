@@ -90,8 +90,13 @@
                             </Grid.RowDefinitions>
 
                             <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
                                 <ToggleButton Grid.Row="0" Margin="3" Height="28" IsChecked="{Binding IsCsvFillRegionSelected}">Fill Regions</ToggleButton>
                                 <Rectangle HorizontalAlignment="Stretch" Height="34" Stroke="Yellow" StrokeThickness="3" Visibility="{Binding CsvFillRegionSelectedVisibility}"/>
+                                <TextBlock Grid.Row="1" Text="{Binding CsvHexCount}"/>
                             </Grid>
 
                             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">

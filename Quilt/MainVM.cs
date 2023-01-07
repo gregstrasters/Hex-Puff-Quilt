@@ -86,6 +86,7 @@ namespace Quilt
             RandomlySortColors(rand);
             _network = new Network(new Random(rand.Next()));
             GenerateQuilt(fillColors);
+            Tabs.RefreshHexCount();
         }
 
         private void GenerateQuilt(bool fillColors)
@@ -231,6 +232,7 @@ namespace Quilt
             Tabs.CsvHexes.Single(l => l.Patterns.Contains(csvHex)).Patterns.Remove(csvHex);
             if (existingPattern != null)
                 Tabs.CsvHexes.Last().Patterns.Add(existingPattern);
+            Tabs.RefreshHexCount();
         }
 
         private bool IsNonEmptyPattern(HexVM hex)

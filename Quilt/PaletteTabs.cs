@@ -45,6 +45,7 @@ namespace Quilt
         public List<List<List<ColorPattern>>> CsvColors = CsvUtil.GetPatternsFromCSV();
         public ObservableCollection<CsvHexPickerVM> MassHexes { get; set; } = new ObservableCollection<CsvHexPickerVM>();
         public ObservableCollection<PatternGroupVM> CsvHexes { get; set; } = new ObservableCollection<PatternGroupVM>();
+        public int CsvHexCount => CsvHexes.Sum(p => p.Patterns.Count);
         public ObservableCollection<HexPatternPickerVM> HexPatternPickers { get; set; } = new ObservableCollection<HexPatternPickerVM>
         {
              new HexPatternPickerVM()
@@ -111,6 +112,11 @@ namespace Quilt
         {
             get => _mass;
             set => Set(ref _mass, value);
+        }
+
+        public void RefreshHexCount()
+        {
+            RaisePropertyChangedEvent(nameof(CsvHexCount));
         }
 
         public void CreateHexes()
